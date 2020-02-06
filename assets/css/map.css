@@ -1,0 +1,50 @@
+#map {
+    height: 350px;
+}
+#locationField, #controls {
+    position: relative;
+}
+#autocomplete, .autocomplete {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+}
+.label {
+    text-align: right;
+    font-weight: bold;
+    width: 100px;
+    color: #303030;
+}
+.searchform{margin : 50px 0;}
+.searchform .col-md-6{
+    height : 50px;
+}
+.searchform input[type='text'], .searchform select{
+    max-width: 400px;
+    width:100%;
+    line-height: 32px;
+    padding: 0 3px;
+    float: right;
+       /*text-align: right;*/
+}
+.searchform .col-md-3{
+    padding-top: 16px;
+}
+.searchform input[type='radio']{
+    height: 12px;
+    width: auto;
+}
+#btn_search{
+    max-width: 400px;
+    width:100%;
+    float: left;
+}
+
+/* ul table*/
+.search-result p{
+    margin-top: 5px;
+}
+.search-result button.form-control{
+    width: 100px;
+}

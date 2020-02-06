@@ -1,0 +1,8 @@
+@media (max-width: 1600px){
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+}

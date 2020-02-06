@@ -1,0 +1,4 @@
+ALTER TABLE courses_en ADD c_order int(10) NOT NULL;
+ALTER TABLE courses_da ADD c_order int(10) NOT NULL;
+ALTER TABLE courses_no ADD c_order int(10) NOT NULL;
+ALTER TABLE courses_se ADD c_order int(10) NOT NULL;

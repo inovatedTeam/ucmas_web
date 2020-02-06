@@ -1,0 +1,91 @@
+body *{font-family: 'Open Sans', Arial, sans-serif !important}
+
+div, p, a, li, td { -webkit-text-size-adjust:none; }
+
+*{-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
+a{word-break: break-all; text-decoration: none; color: inherit;}
+body td img:hover {opacity:0.85;filter:alpha(opacity=85);}
+
+body .ReadMsgBody
+{width: 100%; background-color: #ffffff;}
+body .ExternalClass
+{width: 100%; background-color: #ffffff;}
+body{width: 100%; height: 100%; background-color: #ffffff; margin:0; padding:0; -webkit-font-smoothing: antialiased;}
+html{ background-color:#ffffff; width: 100%;}
+
+body img {user-drag: none; -moz-user-select: none; -webkit-user-drag: none;}
+body .underline:hover {text-decoration: underline!important;}
+body a.rotator img {-webkit-transition: all 1s ease-in-out;-moz-transition: all 1s ease-in-out; -o-transition: all 1s ease-in-out; -ms-transition: all 1s ease-in-out; }
+body a.rotator img:hover { -webkit-transform: rotate(360deg); -moz-transform: rotate(360deg); -o-transform: rotate(360deg);-ms-transform: rotate(360deg); }
+body .hover:hover {opacity:0.85;filter:alpha(opacity=85);}
+body .jump:hover {opacity:0.75; filter:alpha(opacity=75); padding-top: 10px!important;}
+
+body .headerScale img {width: 600px; height: auto;}
+body .icon img {width: 35px; height: auto;}
+body .btn125 img {width: 125px; height: auto;}
+body .logoTop img {width: 100px; height: auto;}
+body .voucherLogo img {width: 100px; height: auto;}
+body .image img {width: 185px; height: auto;}
+body .iconsImages img {width: 84px; height: auto;}
+body .screenLeft img {width: 139px;}
+body .screenRight img {width: 139px;}
+body .imageMobile img {width: 292px;}
+body .vidScale img {width: 512px;}
+body p {margin : 0px;}
+.voucher1 td{vertical-align:top;text-align:left;}
+
+@media only screen and (max-width: 640px){
+    body body{width:auto!important;}
+    body table[class=full] {width: 100%; clear: both; }
+    body table[class=mobile] {width: 100%; padding-left: 20px; padding-right: 20px; clear: both; }
+    body table[class=fullCenter] {width: 100%; text-align: center!important; clear: both; }
+    body td[class=fullCenter] {width: 100%; text-align: center!important; clear: both; }
+    body td[class=textCenter] {width: 100%; text-align: center!important; clear: both; }
+    body table[class=headerScale] {width: 100%!important; text-align: center!important; clear: both; }
+    body .headerScale img {width: 100%!important; height: auto;}
+    body table[class=vidScale] {width: 100%!important; text-align: center!important; clear: both; }
+    body .vidScale img {width: 100%!important; height: auto;}
+    body .erase {display: none;}
+    body table[class=screenLeft] {padding-right: 6px;}
+    body table[class=screenRight] {padding-left: 6px;}
+    body table[class=w90] {width: 90%!important;}
+    body table[class=icon] {width: 100%; text-align: center!important; clear: both; }
+    body table[class=imageMobile] {width: 100%; text-align: center!important; clear: both;}
+    body .imageMobile img {width: 292px!important;}
+    body .voucher1 {width: 100%!important; border-left: none!important; text-align: center!important;}
+    body .fullOne {background-color: #efefef; height: 1px!important;}
+    body .h25 {height:25px!important;}
+    body .w40 {width: 40px!important;}
+    body .pad20 {padding-left: 20px!important; padding-right: 20px!important;}
+
+}
+
+@media only screen and (max-width: 479px){
+    body body{width:auto!important;}
+    body table[class=full] {width: 100%; clear: both; }
+    body table[class=mobile] {width: 100%; padding-left: 20px; padding-right: 20px; clear: both; }
+    body table[class=fullCenter] {width: 100%; text-align: center!important; clear: both; }
+    body td[class=fullCenter] {width: 100%; text-align: center!important; clear: both; }
+    body td[class=textCenter] {width: 100%; text-align: center!important; clear: both; }
+    body table[class=headerScale] {width: 100%!important; text-align: center!important; clear: both; }
+    body .headerScale img {width: 100%!important; height: auto;}
+    body table[class=vidScale] {width: 100%!important; text-align: center!important; clear: both; }
+    body .vidScale img {width: 100%!important; height: auto;}
+    body .erase {display: none;}
+    body .eraseMob {display: none;}
+    body table[class=screenLeft] {padding-right: 6px;}
+    body table[class=screenRight] {padding-left: 6px;}
+    body .font20 {font-size: 20px!important; line-height: 30px!important;}
+    body table[class=w90] {width: 90%!important;}
+    body table[class=icon] {width: 100%; text-align: center!important; clear: both; }
+    body table[class=imageMobile] {width: 100%; text-align: center!important; clear: both;}
+    body .imageMobile img {width: 80%!important; height:auto!important;}
+    body .voucher1 {width: 100%!important; border-left: none!important; text-align: center!important;}
+    body .fullOne {background-color: #efefef; height: 1px!important;}
+    body .h25 {height:25px!important;}
+    body .w40 {width: 40px!important;}
+    body .subscribe {padding-left: 5px!important; padding-right: 5px!important;}
+    body .break {width: 100%!important; display: table-cell!important; margin:0; padding-bottom: 10px!important;}
+    body .notifyBtn {-webkit-border-radius: 4px!important; -moz-border-radius: 4px!important; border-radius: 4px!important;}
+    body .pad20 {padding-left: 20px!important; padding-right: 20px!important;}
+}
