@@ -1,7 +1,9 @@
 
 config.php
 assets/exercises/*
+!assets/exercises/.gitkeep 
 assets/uploads/*
+!assets/uploads/.gitkeep 
 
 */config/development
 */logs/log-*.php
