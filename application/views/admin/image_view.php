@@ -7,7 +7,7 @@
         <section class="mb-3">
             <!--Grid row-->
             <div class="row">
-                <div class="card">
+                <div class="card" style="width: 100%;">
                     <h3 class="card-header primary-color white-text font-bold" style="line-height: 50px;">
                         Images
                         <span class="table-add float-right">

@@ -97,7 +97,17 @@
                                 <input id="ex_content_game1" name="ex_content_game1" type="hidden" value="" />
                                 <p class="mb-1" for="ex_content_game">Exercise Content (Game1)</p>
                                 <small class="text-muted">This is a game for getting a result using formula. ( e.g. 3 + 4 = ? )</small>
-                                <p class="h3-responsive float-right"><a href="javascript:add_fiels()" class="btn-floating btn-sm"><i class="fa fa-plus"></i></a></p>
+                                <p class="h3-responsive float-right"><a href="javascript:add_fiels()" class="btn-sm  btn-primary"><i class="fa fa-plus"></i>Manual</a></p>
+                                <div class="file-field">
+                                    <div class="btn btn-primary btn-sm">
+                                        <span>Choose CSV</span>
+                                        <input type="file" id="csvFileInput" onchange="handleFiles(this.files)" accept=".csv">
+                                    </div>
+                                    <div class="file-path-wrapper">
+                                        <input class="file-path validate" type="text" placeholder="Upload your csv file">
+                                    </div>
+                                </div>
+                                <div id="output"></div>
                                 <div id="ex_content_video">
                                     <table class="table table-striped table-bordered">
                                         <thead>
@@ -203,6 +213,7 @@
 
 <script src="<?=base_url()?>assets/css/rich_editor/editor.js"></script>
 <script src="<?=base_url()?>assets/js/select2/select2.js"></script>
+<!-- <script src="assets/js/read-csv.js"></script> -->
 <script>
     var BASE_URL = '<?php echo base_url(); ?>';
     var EXERCISE_TYPE = "<?=$exercise['exercise_type']?>";
@@ -346,7 +357,7 @@
             }
             
         } else if(EXERCISE_TYPE.toLowerCase() == 'game1') {
-            console.log(EXERCISE_TYPE)
+            // console.log(EXERCISE_TYPE)
             $("#game1_content").show();
             if(is_init == "init") {
                 if(EX_CONTENT != "") {
@@ -390,6 +401,127 @@
 
         });
     });
+</script>
+<script>
+    // read csv
+function handleFiles(files) {
+	// Check for the various File API support.
+	if (window.FileReader) {
+		// FileReader are supported.
+		getAsText(files[0]);
+	} else {
+		alert('FileReader are not supported in this browser.');
+	}
+}
+
+function getAsText(fileToRead) {
+	var reader = new FileReader();
+	// Handle errors load
+	reader.onload = loadHandler;
+	reader.onerror = errorHandler;
+	// Read file into memory as UTF-8      
+	reader.readAsText(fileToRead);
+}
+
+function loadHandler(event) {
+	var csv = event.target.result;
+	processData(csv);             
+}
+
+function processData(csv) {
+    // var allTextLines = csv.split(/\r\n|\n/);
+    var allTextLines = csv.split(/\r?\n|\r/);
+    var lines = [];
+    while (allTextLines.length) {
+        lines.push(allTextLines.shift().split(','));
+    }
+	console.log(lines);
+	drawOutput(lines);
+}
+
+//if your csv file contains the column names as the first line
+function processDataAsObj(csv){
+    var allTextLines = csv.split(/\r?\n|\r/);
+    var lines = [];
+	
+    //first line of csv
+    var keys = allTextLines.shift().split(',');
+	
+    while (allTextLines.length) {
+        var arr = allTextLines.shift().split(',');
+        var obj = {};
+        for(var i = 0; i < keys.length; i++){
+            obj[keys[i]] = arr[i];
+	    }
+        lines.push(obj);
+    }
+        console.log(lines);
+	drawOutputAsObj(lines);
+}
+
+function errorHandler(evt) {
+	if(evt.target.error.name == "NotReadableError") {
+		alert("Canno't read file !");
+	}
+}
+
+function drawOutput(lines){
+    EX_CONTENT_JSON_FIELD_COUNTS = 0;
+    EX_CONTENT_JSON = []
+    for (var i = 0; i < lines.length; i++) {
+		if(lines[i].length > 0 && lines[i][0] != "") {
+            EX_CONTENT_JSON_FIELD_COUNTS = lines[i].length - 1
+            // console.log({EX_CONTENT_JSON_FIELD_COUNTS})
+            var formula = lines[i][0]
+            var temp = []
+            for (var j = 0; j < lines[i].length; j++) {
+                if(j != 0){
+                    temp.push(lines[i][j])
+                }
+            }
+            EX_CONTENT_JSON.push({'params':temp, formula})
+        }
+    }
+    update_game1_content();
+    /*
+	//Clear previous data
+	document.getElementById("output").innerHTML = "";
+	var table = document.createElement("table");
+	for (var i = 0; i < lines.length; i++) {
+		var row = table.insertRow(-1);
+		for (var j = 0; j < lines[i].length; j++) {
+			var firstNameCell = row.insertCell(-1);
+			firstNameCell.appendChild(document.createTextNode(lines[i][j]));
+		}
+	}
+    document.getElementById("output").appendChild(table);
+    */
+}
+
+//draw the table, if first line contains heading
+function drawOutputAsObj(lines){
+	//Clear previous data
+	document.getElementById("output").innerHTML = "";
+	var table = document.createElement("table");
+	
+	//for the table headings
+	var tableHeader = table.insertRow(-1);
+ 	Object.keys(lines[0]).forEach(function(key){
+ 		var el = document.createElement("TH");
+		el.innerHTML = key;		
+		tableHeader.appendChild(el);
+	});	
+	
+	//the data
+	for (var i = 0; i < lines.length; i++) {
+		var row = table.insertRow(-1);
+		Object.keys(lines[0]).forEach(function(key){
+			var data = row.insertCell(-1);
+			data.appendChild(document.createTextNode(lines[i][key]));
+		});
+	}
+	document.getElementById("output").appendChild(table);
+}
 </script>
 
 

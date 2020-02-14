@@ -832,6 +832,25 @@ class Admin extends Back_end
                 $data['ex_tags'] = $this->admin_model->getTags();
                 $this->view('admin/image_new', $data);
                 break;
+            case "upload":
+                $filename = $this->admin_model->uploadImage();
+                if($filename) {
+                    echo json_encode(array('success' => 'OK', 'image' => $filename));
+                }else{
+                    echo json_encode(array('success' => 'fail', 'message' => "Access denied."));
+                }
+				exit ;
+                break;
+            case "saveBulk":
+                if($this->admin_model->saveBulkImage()){
+                    redirect('admin/image/view');
+                }else{
+                    $data['menu_active'] = 'images';
+                    $data['menu_sub_active'] = 'image_view';
+                    $data['images'] = $this->admin_model->getImages();
+                    $this->view('admin/image_view', $data);
+                }
+                break;
             case "edit":
                 $data['menu_active'] = 'images';
                 $data['menu_sub_active'] = '';

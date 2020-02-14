@@ -1086,6 +1086,42 @@ class Admin_model extends CI_Model
 
         return $result;
     }
+    function uploadImage() {
+        if (isset($_FILES['photo'])) {
+            $default = explode(".", $_FILES["photo"]["name"]);
+            $extension = end($default);
+            $filename = "ex_image_".$this->generate_token(8) . "." . $extension;
+            if (move_uploaded_file($_FILES["photo"]["tmp_name"], $this->save_ex_photo. $filename)) :
+                return $filename;
+            endif;
+        }
+        return false;
+    }
+    function saveBulkImage() {
+        extract($_POST);
+        $ex_tags_str = "";
+        if(count($ex_tags) > 0) {
+            // update tags
+            foreach($ex_tags as $ex_tag) {
+                $sql = "SELECT * FROM _tags WHERE tag_name ='$ex_tag'";
+                $query = $this->db->query( $sql );
+                if($query->num_rows() > 0){
+                    // already exist 
+                }else{
+                    // add tag
+                    $this->db->query( "INSERT INTO _tags(tag_name) VALUES ('$ex_tag')" );
+                }
+            }
+            $ex_tags_str = implode(",", $ex_tags);
+        }
+
+        $image_arr = explode(",", $images);
+        foreach($image_arr as $img){
+            $data = ["url"=> $img, "tags"=> $ex_tags_str];
+            $this->db->insert("_images", $data);
+        }
+        return true;
+    }
     function saveImage($image_id) {
         extract($_POST);
         $ex_tags_str = "";

@@ -50,9 +50,9 @@ class Functions {
 		// print_r($headers);exit;
         if (isset($headers['Access-Token']) && isset($headers['Device-Id'])) :
 			$this->CI->load->model('api_model');
-			$email = $this->CI->api_model->is_exist_email($headers['Access-Token'], $headers['Device-Id']);
-			if ($email) :
-				return $email;
+			$focus_id = $this->CI->api_model->is_exist_email($headers['Access-Token'], $headers['Device-Id']);
+			if ($focus_id != 0) :
+				return $focus_id;
 				// switch($info['status']) :
 				// 	case 1 :
 				// 		return $info['account_id'];
@@ -67,7 +67,7 @@ class Functions {
 				// 		break;
 				// endswitch;
 			else :
-				echo json_encode(array('success' => 'fail', 'message' => "Access denied."));
+				echo json_encode(array('success' => 'fail', 'message' => "You have invalid token. Please register again."));
 				exit ;
 			endif;
 		else :

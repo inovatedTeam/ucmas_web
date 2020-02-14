@@ -73,37 +73,31 @@ class Account extends REST_Controller {
         $data = [];
         $rawPostData = file_get_contents('php://input');
         $input = (array)json_decode($rawPostData);
-        if(!empty($input['user_id'])){
-            $data = $this->api_model->check_token($input['user_id']);
+        $data = $this->api_model->check_token();
+     
+        $this->response($data, REST_Controller::HTTP_OK);
+    }
+    
+    // update profile
+    public function profile_post()
+    {
+        $data = [];
+        $rawPostData = file_get_contents('php://input');
+        $input = (array)json_decode($rawPostData);
+        /*
+        email, phone number, parent_fname and parent_lname
+        */
+        if( !empty($input['email']) && 
+            !empty($input['phone']) && 
+            !empty($input['parent_fname']) && 
+            !empty($input['parent_lname'])
+        ){
+            $data = $this->api_model->update_profile($input);
         }else{
             $data = ['success' => 'fail', 'message' => "Error validation."];
         }
      
         $this->response($data, REST_Controller::HTTP_OK);
-    }
-    
-    public function user_get($id = 0)
-	{
-        if(!empty($id)){
-            $data = $this->api_model->generate_token(8);
-        }else{
-            $data = $this->api_model->generate_token(8);
-        }
-     
-        $this->response(["this is test user"], REST_Controller::HTTP_OK);
-	}
-      
-    /**
-     * Get All Data from this method.
-     *
-     * @return Response
-    */
-    public function index_post()
-    {
-        $input = $this->input->post();
-        $this->db->insert('items',$input);
-     
-        $this->response(['Item created successfully.'], REST_Controller::HTTP_OK);
     } 
      
     /**
