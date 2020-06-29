@@ -43,7 +43,7 @@
                                             }
                                             ?>
                                         </select>
-                                        <label for="classroom_id">Level</label>
+                                        <label for="sel_level">Level</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -60,7 +60,13 @@
                                             }
                                             ?>
                                         </select>
-                                        <label for="classroom_id">Course</label>
+                                        <label for="sel_course">Course</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="md-form">
+                                        <input id="description" name="description" type="text" value="<?=$class['description']?>" required>
+                                        <label for="description">Description</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -95,7 +101,7 @@
                                             <option value='-1'>Select Student</option> 
                                             <?php
                                             foreach ($su_students as $su_student){
-                                                echo "<option value='".$su_student['id']."' data='".$su_student['email']."' >".$su_student['cfirst_name']." ".$su_student['csurname']."</option>";
+                                                echo "<option value='".$su_student['id']."' data='".$su_student['email']."' >".$su_student['child_name']."</option>";
                                             }
                                             ?>
                                         </select>

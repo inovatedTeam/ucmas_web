@@ -37,10 +37,9 @@ class Admin_model extends CI_Model
     }
     function make_list($arr, $key1 = "", $key2 = ""){
         $result = array();
-        for($i=0; $i < count($arr); $i++){
-            $result[$arr[$key1]] = $arr[$key2];
+        foreach($arr as $row){
+            $result[$row[$key1]] = $row[$key2];
         }
-        print_r($result);exit;
         return $result;
     }
     function make_in($arr, $parameter ){
@@ -1016,11 +1015,24 @@ class Admin_model extends CI_Model
 
         return $result;
     }
+    function getExercise_type_ids() {
+
+        $sql = "SELECT a.* FROM _exercise_types as a
+                ORDER BY a.id ASC";
+        $result = array();
+        $query = $this->db->query( $sql );
+        if($query->num_rows() > 0){
+            $result = $query->result_array();
+        }
+
+        return $this->make_list($result, 'type_name', 'type_label');
+    }
     function getExercise_type($id) {
 
         $result = array(
             "id"=>0, 
-            "type_name"=>"", 
+            "type_name"=>"html", 
+            "type_label"=>"", 
             "type_description"=> ""
         );
         if($id > 0) {
@@ -1036,13 +1048,13 @@ class Admin_model extends CI_Model
     function saveExercise_type($type_id) {
         extract($_POST);
         if($type_id == 0){
-            $sql_insert = "INSERT INTO _exercise_types(type_name, type_description) 
-                    VALUES ('$type_name', '$type_description')";
+            $sql_insert = "INSERT INTO _exercise_types(type_name, type_description, type_label) 
+                    VALUES ('$type_name', '$type_description', '$type_label')";
             $this->db->query( $sql_insert );
             $new_id = $this->db->insert_id();
             return true;
         }else{
-            $sql = "UPDATE _exercise_types SET type_name = '$type_name', type_description = '$type_description' WHERE id = $type_id";
+            $sql = "UPDATE _exercise_types SET type_name = '$type_name', type_label = '$type_label', type_description = '$type_description' WHERE id = $type_id";
             if($this->db->query( $sql ) ){
                 return true;
             }else{
@@ -1205,7 +1217,7 @@ class Admin_model extends CI_Model
 
         $result = array();
         if($level_id > 0 && $lesson_id > 0) {
-            $sql = "SELECT a.*, b.level_name, c.lesson_name 
+            $sql = "SELECT a.*, b.level_name, c.lesson_name
                     FROM _exercises a
                     LEFT JOIN levels_en b ON a.level_id = b.id
                     LEFT JOIN _lessons c ON a.lesson_id = c.id
@@ -1244,17 +1256,18 @@ class Admin_model extends CI_Model
     }
     function saveExercise($level_id, $lesson_id, $exercise_id) {
         extract($_POST);
+        
         $ex_content = "";
         if(strToLower($sel_type) == 'html') {
             $ex_content_html = str_replace('"', "'", $ex_content_html);
             $ex_content = $this->db->escape_str($ex_content_html);
-        } else if(strToLower($sel_type) == 'video') {
+        } else if(strToLower($sel_type) == 'video_youtube') {
             $ex_content = $this->db->escape_str($ex_content_video);
-        } else if(strToLower($sel_type) == 'game1') {
+        } else if(strToLower($sel_type) == 'reading') {
             $ex_content = $this->db->escape_str($ex_content_game1);
         }
         $ex_tags_str= "";
-        if(count($ex_tags) > 0) {
+        if(isset($_POST['ex_tags']) && count($ex_tags) > 0) {
             // update tags
             foreach($ex_tags as $ex_tag) {
                 $sql = "SELECT * FROM _tags WHERE tag_name ='$ex_tag'";
@@ -1410,56 +1423,64 @@ class Admin_model extends CI_Model
 
     /* classrooms */
     function getClassrooms() {
-        $sql = "SELECT a.*, b.level_name 
-                FROM _classrooms as a
-                LEFT JOIN levels_en b ON a.level_id = b.id
-                ORDER BY a.level_id, a.id ASC";
+        $sql = "SELECT a.*, b.level_name FROM _classes a LEFT JOIN levels_en b ON a.level_id = b.id";
+        // $sql = "SELECT a.*, c.level_id, c.course_id, c.level_name, c.description 
+        //         FROM _classrooms as a
+        //         LEFT JOIN (SELECT d.*, e.level_name FROM _classes d LEFT JOIN levels_en e ON d.level_id = e.id) c ON a.c_id = c.id
+        //         ORDER BY c.level_id, a.id ASC";
         $result = array();
         $query = $this->db->query( $sql );
         if($query->num_rows() > 0){
-            $data = $query->result_array();
-            $classrooms = [];
-            $classroom_id = 0;
-            $teacher = "";
-            $level_id = 0;
-            $level_name = "";
-            $course_id = "";
-            $student_ct = 0;
-            foreach($data as $row) {
-                if(in_array($row['c_id'], $classrooms)){
-                    $classroom_id = $row['c_id'];
-                    if($row['member_type'] == 'teacher') $teacher =  $row['first_name']." ".$row['last_name'];
-                    $level_id = $row['level_id'];
-                    $level_name = $row['level_name'];
-                    $course_id = $row['course_id'];
-                    if($row['member_type'] == 'student') $student_ct ++;
-                }else{ // new classroom
-                    if($classroom_id != 0){ // add classroom data into result
-                        $result[] = ['c_id' => $classroom_id, "level_id"=>$level_id, "level_name"=>$level_name, "course_id"=>$course_id, "teacher"=>$teacher, "student_ct"=>$student_ct];
-                        $classroom_id = 0;
-                        $teacher = "";
-                        $level_id = 0;
-                        $level_name = "";
-                        $course_id = "";
-                        $student_ct = 0;
-                    }
-                    $classrooms[] = $row['c_id'];
-                    $classroom_id = $row['c_id'];
-                    if($row['member_type'] == 'teacher') $teacher =  $row['first_name']." ".$row['last_name'];
-                    $level_id = $row['level_id'];
-                    $level_name = $row['level_name'];
-                    $course_id = $row['course_id'];
-                    if($row['member_type'] == 'student') $student_ct ++;
+            $arr = $query->result_array();
+            foreach($arr as $data){
+                $teacher = '';
+                $student_ct = 0;
+                $sql_sub_teacher = "SELECT a.first_name, a.last_name FROM _classrooms a WHERE a.c_id = ? AND a.member_type = 'teacher' LIMIT 1";
+                $query1 = $this->db->query( $sql_sub_teacher, [$data['id']] );
+                if($query1->num_rows() > 0){
+                    $data1 = $query1->row_array();
+                    $teacher = $data1['first_name'].' '.$data1['last_name'];
                 }
+                $sql_sub_student = "SELECT COUNT(*) as ct FROM _classrooms a WHERE a.c_id = ? AND a.member_type = 'student' LIMIT 1";
+                $query2 = $this->db->query( $sql_sub_student, [$data['id']] );
+                if($query2->num_rows() > 0){
+                    $student_ct = $query2->row_array()['ct'];
+                }
+                $result[] = [
+                    'c_id' => $data['id'], 
+                    "level_id"=>$data['level_id'], 
+                    "level_name"=>$data['level_name'], 
+                    "description"=>$data['description'], 
+                    "teacher"=>$teacher, 
+                    "course_id"=>$data['course_id'], 
+                    "student_ct"=>$student_ct
+                ];
             }
-            if($classroom_id != 0){ // add classroom data into result
-                $result[] = ['c_id' => $classroom_id, "level_id"=>$level_id, "level_name"=>$level_name, "teacher"=>$teacher, "course_id"=>$course_id, "student_ct"=>$student_ct];
-            }
-
         }
         return $result;
     }
-
+    function getClass($id) {
+        $result = [];
+        $sql = "SELECT * FROM _classes WHERE id = $id LIMIT 1";
+        $query = $this->db->query( $sql );
+        if($query->num_rows() > 0){
+            $result = $query->row_array();
+        }
+        return $result;
+    }
+    function saveClass() {
+        extract($_POST);
+        $data = [
+            'level_id' => $sel_level,
+            'course_id' => $sel_course,
+            'description' => $description,
+        ];
+        if($this->db->insert('_classes', $data)) {
+            return true;
+        }else{
+            return false;
+        }
+    }
     function getCoursesByLevelID($level_id){
         if($level_id ==0) {
             return [];
@@ -1514,9 +1535,15 @@ class Admin_model extends CI_Model
         $result = [];
         if($level_id > 0) {
             $student_ids = $this->make_in($students, 'relation_id');
-            $add_query = "";
-            if($student_ids) $add_query = " AND id NOT IN $student_ids";
-            $sql = "SELECT * FROM orders WHERE state=1 AND is_student=0 AND cfirst_name <> '' ".$add_query;
+            $add_query1 = "";
+            if($student_ids) $add_query1 = " AND a.id NOT IN $student_ids";
+            $add_query2 = "";
+            if($student_ids) $add_query2 = " AND b.relation_id NOT IN $student_ids";
+            $sql = "SELECT a.id, a.email, CONCAT(a.cfirst_name,' ',a.csurname) as child_name 
+                    FROM orders a WHERE a.state=1 AND a.is_student=0 AND a.cfirst_name <> '' $add_query1
+                    UNION
+                    SELECT b.relation_id as id, b.email, CONCAT(b.first_name,' ',b.last_name) as child_name
+                    FROM _classrooms b WHERE b.c_id = 0 $add_query2 ";
             $query = $this->db->query( $sql );
             if($query->num_rows() > 0){
                 $result = $query->result_array();
@@ -1533,19 +1560,12 @@ class Admin_model extends CI_Model
             return 1; // first classroom
         }
     }
-    function addTeacherIntoClassroom($teacher_id, $classroom_id, $level_id, $course_id){
+    function addTeacherIntoClassroom($teacher_id, $classroom_id){
         // is existing teacher ?
         $sql = "SELECT * FROM _classrooms WHERE member_type='teacher' AND relation_id = ? AND c_id=? LIMIT 1";
         $query = $this->db->query( $sql, [$teacher_id, $classroom_id] );
         if($query->num_rows() > 0){
-            $teacher = $query->row_array();
-            if($teacher['level_id'] == $level_id && $teacher['course_id'] == $course_id ){
-                return true;
-            }else{
-                // update level and course
-                $this->db->update('_classrooms', ["level_id"=> $level_id, "course_id"=> $course_id]);
-                return true;
-            }
+            return true;
         }else{
             // update orders table
             // add teacher
@@ -1554,8 +1574,6 @@ class Admin_model extends CI_Model
                 $teacher = $query->row_array();
                 $data = [
                     "c_id"=> $classroom_id,
-                    "level_id"=> $level_id,
-                    "course_id"=> $course_id,
                     "member_type"=> "teacher",
                     "first_name"=> $teacher['first_name'],
                     "last_name"=> $teacher['last_name'],
@@ -1570,17 +1588,17 @@ class Admin_model extends CI_Model
             }
         }
     }
-    function addStudentIntoClassroom($student_id, $classroom_id, $level_id, $course_id){
+    function addStudentIntoClassroom($student_id, $classroom_id){
         // is existing student ?
-        $sql = "SELECT * FROM _classrooms WHERE member_type='student' AND relation_id = ? AND c_id=? LIMIT 1";
-        $query = $this->db->query( $sql, [$student_id, $classroom_id] );
+        $sql = "SELECT * FROM _classrooms WHERE member_type='student' AND relation_id = ? LIMIT 1";
+        $query = $this->db->query( $sql, [$student_id] );
         if($query->num_rows() > 0){
             $student = $query->row_array();
-            if($student['level_id'] == $level_id && $student['course_id'] == $course_id ){
+            if($student['c_id'] == $classroom_id){
                 return true;
             }else{
-                // update level and course
-                $this->db->update('_classrooms', ["level_id"=> $level_id, "course_id"=> $course_id]);
+                // update classroom_id
+                $this->db->update('_classrooms', ["c_id"=> $classroom_id], ['id' => $student['id']]);
                 return true;
             }
         }else{
@@ -1592,8 +1610,6 @@ class Admin_model extends CI_Model
                 $student = $query->row_array();
                 $data = [
                     "c_id"=> $classroom_id,
-                    "level_id"=> $level_id,
-                    "course_id"=> $course_id,
                     "member_type"=> "student",
                     "first_name"=> $student['cfirst_name'],
                     "last_name"=> $student['csurname'],
@@ -1619,26 +1635,38 @@ class Admin_model extends CI_Model
     }
     function saveClassroom($classroom_id) {
         extract($_POST);
-        if($classroom_id == 0){
-            $classroom_id = $this->getNewClassroomID();
-        }
+
+        $data = [
+            'level_id' => $sel_level,
+            'course_id' => $sel_course,
+            'description' => $description,
+        ];
+        $this->db->update('_classes', $data, ['id' => $classroom_id]);
+
         $arr_teacher = $teacher_ids=="" ? [] : explode(",", $teacher_ids);
         $arr_students = $students_ids=="" ? [] : explode(",", $students_ids);
+        
+        // remove students and teacher
+        $this->db->update('_classrooms', ['c_id' => 0], ['c_id' => $classroom_id]);
+
         if(count($arr_teacher)) {
             foreach($arr_teacher as $t){
-                $this->addTeacherIntoClassroom($t, $classroom_id, $sel_level, $sel_course);
+                $this->addTeacherIntoClassroom($t, $classroom_id);
             }
         }
+        
         if(count($arr_students)) {
             foreach($arr_students as $t){
-                $this->addStudentIntoClassroom($t, $classroom_id, $sel_level, $sel_course);
+                $this->addStudentIntoClassroom($t, $classroom_id);
             }
         }
         return true;
     }
     function deleteClassroom($id) {
-        // $sql = "DELETE FROM _classrooms WHERE id = $id";
-        // $this->db->query( $sql );
+        $this->db->update("_classrooms", ['c_id' => 0], ['c_id' => $id, 'member_type' => 'student']);
+        $this->db->query("DELETE FROM _classrooms WHERE c_id = $id AND member_type = 'teacher'");
+        $sql = "DELETE FROM _classes WHERE id = $id";
+        $this->db->query( $sql );
 
         return true;
     }

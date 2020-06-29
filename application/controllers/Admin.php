@@ -781,6 +781,7 @@ class Admin extends Back_end
                 $data['menu_active'] = 'exercise_types';
                 $data['menu_sub_active'] = '';
                 $data['exercise_type'] = $this->admin_model->getExercise_type($param2);
+                $data['types'] = ['html','video_youtube','video_mp4','reading','listening', 'core_exrecise'];
                 $this->view('admin/exercise_type_edit', $data);
                 break;
             case "save":
@@ -903,6 +904,7 @@ class Admin extends Back_end
                 if($level_id > 0) $lessons = $this->admin_model->getLessons($level_id);
                 $data['lessons'] = $lessons;
                 $exercises = [];
+                $data['exercise_types'] = $this->admin_model->getExercise_type_ids();
                 if($level_id > 0 && $lesson_id > 0) $exercises = $this->admin_model->getExercises($level_id, $lesson_id);
                 $data['exercises'] = $exercises;
                 $data['level_id'] = $level_id;
@@ -989,6 +991,7 @@ class Admin extends Back_end
                 $data['menu_active'] = 'exerciseByTag';
                 $data['menu_sub_active'] = '';
                 $data['tag_id'] = $tag_id;
+                $data['exercise_types'] = $this->admin_model->getExercise_type_ids();
                 $data['tagIdByName'] = $this->admin_model->getTagIdByName();
                 $data['tag_name'] = $this->admin_model->getTag($tag_id);
                 $data['tags'] = $this->admin_model->getTags();
@@ -1060,21 +1063,50 @@ class Admin extends Back_end
                 $data['classrooms'] = $this->admin_model->getClassrooms();
                 $this->view('admin/classroom_view', $data);
                 break;
-            case "edit":
+            case "add":
                 $data['menu_active'] = 'classrooms';
                 $data['menu_sub_active'] = '';
                 $data['levels'] = $this->admin_model->getLevels('en');
                 $data['courses'] = $this->admin_model->getCoursesByLevelID($level_id);
-                $data['teacher'] = $this->admin_model->getClassroomTeacher($classroom_id);
-                $data['json_teacher'] = json_encode($data['teacher']);
-                $data['students'] = $this->admin_model->getClassroomStudents($classroom_id);
-                $data['json_students'] = json_encode($data['students']);
-                $data['su_teachers'] = $this->admin_model->getSuggestionTeachers($level_id, $data['teacher']);
-                $data['su_students'] = $this->admin_model->getSuggestionStudents($level_id, $data['students']);
-                $data['classroom_id'] = $classroom_id != 0 ? $classroom_id : $this->admin_model->getNewClassroomID($classroom_id);
                 $data['level_id'] = $level_id;
                 $data['course_id'] = $course_id;
-                $this->view('admin/classroom_edit', $data);
+                $this->view('admin/classroom_add', $data);
+                break;
+            case "add_class":
+                if($this->admin_model->saveClass()){
+                    redirect('admin/classroom/view');
+                }else{
+                    $data['menu_active'] = 'classrooms';
+                    $data['menu_sub_active'] = '';
+                    $data['err'] = 'Database error';
+                    $data['levels'] = $this->admin_model->getLevels('en');
+                    $data['courses'] = $this->admin_model->getCoursesByLevelID($level_id);
+                    $data['level_id'] = $level_id;
+                    $data['course_id'] = $course_id;
+                    $this->view('admin/classroom_add', $data);
+                }
+                break;
+            case "edit":
+                $data['menu_active'] = 'classrooms';
+                $data['menu_sub_active'] = '';
+                if($classroom_id == 0) {
+                    redirect('admin/classroom/view');
+                }else{
+                    $data['levels'] = $this->admin_model->getLevels('en');
+                    $data['courses'] = $this->admin_model->getCoursesByLevelID($level_id);
+                    $data['teacher'] = $this->admin_model->getClassroomTeacher($classroom_id);
+                    $data['json_teacher'] = json_encode($data['teacher']);
+                    $data['students'] = $this->admin_model->getClassroomStudents($classroom_id);
+                    $data['json_students'] = json_encode($data['students']);
+                    $class = $this->admin_model->getClass($classroom_id);
+                    $data['classroom_id'] = $classroom_id;
+                    $data['class'] = $class;
+                    $data['level_id'] = $level_id;
+                    $data['course_id'] = $course_id;
+                    $data['su_teachers'] = $this->admin_model->getSuggestionTeachers($class['level_id'], $data['teacher']);
+                    $data['su_students'] = $this->admin_model->getSuggestionStudents($class['level_id'], $data['students']);
+                    $this->view('admin/classroom_edit', $data);
+                }
                 break;
             case "save":
                 if($this->admin_model->saveClassroom($classroom_id)){
@@ -1089,11 +1121,13 @@ class Admin extends Back_end
                     $data['json_teacher'] = json_encode($data['teacher']);
                     $data['students'] = $this->admin_model->getClassroomStudents($classroom_id);
                     $data['json_students'] = json_encode($data['students']);
-                    $data['su_teachers'] = $this->admin_model->getSuggestionTeachers($level_id, $data['teacher']);
-                    $data['su_students'] = $this->admin_model->getSuggestionStudents($level_id, $data['students']);
-                    $data['classroom_id'] = $classroom_id != 0 ? $classroom_id : $this->admin_model->getNewClassroomID($classroom_id);
+                    $class = $this->admin_model->getClass($classroom_id);
+                    $data['classroom_id'] = $classroom_id;
+                    $data['class'] = $class;
                     $data['level_id'] = $level_id;
                     $data['course_id'] = $course_id;
+                    $data['su_teachers'] = $this->admin_model->getSuggestionTeachers($class['level_id'], $data['teacher']);
+                    $data['su_students'] = $this->admin_model->getSuggestionStudents($class['level_id'], $data['students']);
                     $this->view('admin/classroom_edit', $data);
                 }
                 break;

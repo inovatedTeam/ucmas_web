@@ -90,16 +90,18 @@
                                             echo '<tr>';
                                             echo '<td>'.$index.'</td>';
                                             echo '<td><a href="javascript:open_experience('.$level_id.','.$lesson_id.','.$row['id'].')" class="btn btn-default btn-sm" >Preview</a></td>';
-                                            echo '<td>'.$row['exercise_type'].'</td>';
+                                            echo '<td>'.$exercise_types[$row['exercise_type']].'</td>';
                                             echo '<td>'.$row['ex_name'].'</td>';
                                             echo '<td>';
-                                            foreach($arr_tags as $s_tag) {
-                                                echo '<a href="'.base_url().'admin/exerciseByTag/view/'.$tagIdByName[$s_tag].'" class="btn btn-default btn-sm" style="padding: 0.5rem 0.5rem;margin-right: 5px;">'.$s_tag.'</a>';
+                                            if($row['ex_tags'] != '' && count($arr_tags) > 0) {
+                                                foreach($arr_tags as $s_tag) {
+                                                    echo '<a href="'.base_url().'admin/exerciseByTag/view/'.$tagIdByName[$s_tag].'" class="btn btn-default btn-sm" style="padding: 0.5rem 0.5rem;margin-right: 5px;">'.$s_tag.'</a>';
+                                                }
                                             }
                                             echo '</td>';
                                             echo '<td>'.$row['ex_time'].'</td>';
                                             echo '<td>';
-                                            if($index != count($exercises)) echo '<a href="'.base_url().'admin/exercise/sort_down/'.$level_id.'/'.$lesson_id.'/'.$row['ex_order'].'" rel="tooltip" title="Down"><i class="fa fa-arrow-circle-o-down"></i></a>';
+                                            if($index != count($exercises)) echo '<a href="'.base_url().'admin/exercise/sort_down/'.$level_id.'/'.$lesson_id.'/'.$row['ex_order'].'" rel="tooltip" title="Down" style="margin-right: 10px;z-index: 10;"><i class="fa fa-arrow-circle-o-down"></i></a>';
                                             if($index != 1) echo '<a href="'.base_url().'admin/exercise/sort_up/'.$level_id.'/'.$lesson_id.'/'.$row['ex_order'].'" rel="tooltip" title="Up"><i class="fa fa-arrow-circle-o-up mx-1"></i></a>';
                                             echo '</td>';
                                             echo '<td>
@@ -152,8 +154,11 @@
 <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
 <script>
     var BASE_URL = '<?php echo base_url(); ?>';
+    var level_id = "<?=$level_id?>";
+    var lesson_id = "<?=$lesson_id?>";
+    var exercise_id = "<?=$exercise_id?>";
     function delete_action(id) {
-        $("#btn_delete").attr("href", BASE_URL + 'admin/exercise/delete/' + id);
+        $("#btn_delete").attr("href", BASE_URL + 'admin/exercise/delete/' + level_id + "/" + lesson_id + "/" + id);
         $('#centralModalSm').modal({
             keyboard: false
         });
@@ -162,9 +167,6 @@
         var url = BASE_URL + "admin/exercise/preview/" + level_id + "/" + lesson_id + "/" + experience_id;
         var myWindow = window.open(url, "MsgWindow", "width=800,height=800");
     }
-    var level_id = "<?=$level_id?>";
-    var lesson_id = "<?=$lesson_id?>";
-    var exercise_id = "<?=$exercise_id?>";
     $(document).ready(function() {
         $('#example').DataTable({"aaSorting": []});
         $('select').addClass('mdb-select');

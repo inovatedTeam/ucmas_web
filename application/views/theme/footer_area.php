@@ -52,8 +52,12 @@
 <div id="copyright">
     <div class="container">
         <div class="row">
-            <div class="copyright-text col-md-6"><?=lang('copyright')?> </div>
-            <div class="social-links col-md-6">
+            <div class="copyright-text">
+                <div style="float:left;margin-left: 10px;"><?=lang('copyright')?></div> 
+                <div style="float:right;margin-right: 10px;"><a href="<?=base_url('home/privacy')?>">Privacy Policy</a></div>
+            </div>
+            <!-- <div class="social-links col-md-6 col-6 text-right"> -->
+                
 <!--                <ul class="no-padding">-->
 <!--                    <li class="twitter soc-icon"><a href="http://twitter.com/#" class="fa fa-twitter"></a></li>-->
 <!--                    <li class="facebook soc-icon"><a href="http://facebook.com/#" class="fa fa-facebook"></a></li>-->
@@ -62,7 +66,7 @@
 <!--                    <li class="tumblr soc-icon"><a href="https://www.tumblr.com/" class="fa fa-tumblr"></a></li>-->
 <!--                    <li class="vimeo soc-icon"><a href="https://vimeo.com/" class="fa fa-vimeo-square"></a></li>-->
 <!--                </ul>-->
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 </div>

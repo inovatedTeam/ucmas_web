@@ -70,7 +70,7 @@
                                                 echo '<td>'.$index.'</td>';
                                                 echo '<td>'.$row['level_name'].'</td>';
                                                 echo '<td>'.$row['lesson_name'].'</td>';
-                                                echo '<td>'.$row['exercise_type'].'</td>';
+                                                echo '<td>'.$exercise_types[$row['exercise_type']].'</td>';
                                                 echo '<td>'.$row['ex_name'].'</td>';
                                                 echo '<td>';
                                                 foreach($arr_tags as $s_tag) {

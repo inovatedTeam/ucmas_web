@@ -14,6 +14,15 @@ class Account extends REST_Controller {
        $this->load->database();
        $this->load->model('api_model');
     }
+
+    private function validator($params, $keys) {
+        foreach($keys as $key) {
+            if(empty($params[$key])) {
+                return $key;
+            }
+        }
+        return "OK";
+    }
        
     /**
      * Get All Data from this method.
@@ -34,8 +43,8 @@ class Account extends REST_Controller {
         $data = [];
         $rawPostData = file_get_contents('php://input');
         $input = (array)json_decode($rawPostData);
-        if(!empty($input['email']) && !empty($input['role'])){
-            $data = $this->api_model->register_email($input['email'], $input['role']);
+        if(!empty($input['email'])){
+            $data = $this->api_model->register_email($input['email']);
         }else{
             $data = ['success' => 'fail', 'message' => "Error validation."];
         }
@@ -60,12 +69,15 @@ class Account extends REST_Controller {
         $data = [];
         $rawPostData = file_get_contents('php://input');
         $input = (array)json_decode($rawPostData);
-        if(!empty($input['verify_code']) && !empty($input['access_token']) && !empty($input['device_type']) && !empty($input['push_token'])){
-            $data = $this->api_model->check_verify_code($input['access_token'], $input['verify_code'], $input['device_type'], $input['push_token']);
+        $keys = ["verification_code", 'access_token', 'device_type', 'push_token', 'role'];
+        $res = $this->validator($input, $keys);
+       
+        if( $res == "OK" ) {
+            $data = $this->api_model->check_verify_code($input);
         }else{
             $data = ['success' => 'fail', 'message' => "Error validation."];
         }
-     
+    
         $this->response($data, REST_Controller::HTTP_OK);
     }
 
@@ -85,14 +97,48 @@ class Account extends REST_Controller {
         $rawPostData = file_get_contents('php://input');
         $input = (array)json_decode($rawPostData);
         /*
-        email, phone number, parent_fname and parent_lname
+        email, phone, parent_fname and parent_lname
         */
-        if( !empty($input['email']) && 
-            !empty($input['phone']) && 
-            !empty($input['parent_fname']) && 
-            !empty($input['parent_lname'])
-        ){
+
+        $keys = ["email"];
+        $res = $this->validator($input, $keys);
+       
+        if( $res == "OK" ) {
             $data = $this->api_model->update_profile($input);
+        }else{
+            $data = ['success' => 'fail', 'message' => "Error validation."];
+        }
+     
+        $this->response($data, REST_Controller::HTTP_OK);
+    } 
+    // select child
+    public function selectChild_post()
+    {
+        $data = [];
+        $rawPostData = file_get_contents('php://input');
+        $input = (array)json_decode($rawPostData);
+        $keys = ["child_id"];
+        $res = $this->validator($input, $keys);
+       
+        if( $res == "OK" ) {
+            $data = $this->api_model->select_child($input['child_id']);
+        }else{
+            $data = ['success' => 'fail', 'message' => "Error validation."];
+        }
+     
+        $this->response($data, REST_Controller::HTTP_OK);
+    } 
+    // select classroom
+    public function selectClassroom_post()
+    {
+        $data = [];
+        $rawPostData = file_get_contents('php://input');
+        $input = (array)json_decode($rawPostData);
+        $keys = ["teacher_id"]; // teacher id
+        $res = $this->validator($input, $keys);
+       
+        if( $res == "OK" ) {
+            $data = $this->api_model->select_child($input['teacher_id']);
         }else{
             $data = ['success' => 'fail', 'message' => "Error validation."];
         }

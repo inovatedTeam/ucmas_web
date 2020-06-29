@@ -2222,7 +2222,6 @@ abstract class REST_Controller extends \CI_Controller {
         // Convert the config items into strings
         $allowed_headers = implode(' ,', $this->config->item('allowed_cors_headers'));
         $allowed_methods = implode(' ,', $this->config->item('allowed_cors_methods'));
-
         // If we want to allow any domain to access the API
         if ($this->config->item('allow_any_cors_domain') === TRUE)
         {

@@ -48,7 +48,7 @@ class Functions {
 		// $headers = $this->apache_request_headers();
 		$headers = $this->CI->input->request_headers();
 		// print_r($headers);exit;
-        if (isset($headers['Access-Token']) && isset($headers['Device-Id'])) :
+        if (isset($headers['Access-Token']) && isset($headers['Device-Id']) && isset($headers['Role'])) :
 			$this->CI->load->model('api_model');
 			$focus_id = $this->CI->api_model->is_exist_email($headers['Access-Token'], $headers['Device-Id']);
 			if ($focus_id != 0) :
@@ -76,38 +76,29 @@ class Functions {
 		endif;
 	}
 
-	public function send_verification_email($email, $verification_code) {
+	public function send_verification_email($to, $verification_code) {
 		$subject = "Verification Code";
 		$message = "<p>Thanks for your registering into Education App.</p>";
 		$message .= "<p>Your verification code is</p>";
 		$message .= "<h2>$verification_code</h2>";
-		$config = Array(
-			'protocol' => EMAIL_PROTOCOL,
-			'smtp_host' => EMAIL_SMTP_HOST,
-			'smtp_port' => EMAIL_SMTP_PORT,
-			'smtp_user' => EMAIL_SMTP_USER,
-			'smtp_pass' => EMAIL_SMTP_PASS,
-			'charset'   => EMAIL_CHARSET,
-			'wordwrap'=> EMAIL_WORDWRAP,
-			'mailtype' => EMAIL_MAILTYPE
+		
+		require 'vendor/autoload.php';
+	
+		$email = new \SendGrid\Mail\Mail();
+		$email->setFrom(EMAIL_SERVER_FROM, SITE_NAME);
+		$email->setSubject($subject);
+		$email->addTo($to);
+		$email->addContent(
+			"text/html", $message
 		);
-
-		$config['newline']    = "\r\n";
-		$this->CI->load->library('email', $config);
-
-		$this->CI->email->to($email); // joseph.rouhana@ucmas.no
-		$this->CI->email->bcc('info@ucmas.no,joseph.rouhana@ucmas.no');
-		$this->CI->email->from(EMAIL_SERVER_FROM, "UCMAS Norge");
-		$this->CI->email->subject($subject);
-		$this->CI->email->message($message);
-
-		if($this->CI->email->send())
-		{
+		$api_key = SENDGRID_KEY;
+		$sendgrid = new \SendGrid($api_key);
+		try {
+			$response = $sendgrid->send($email);
 			return true;
-		}
-		else
-		{
-			return false; //show_error($this->email->print_debugger());
+		} catch (Exception $e) {
+			// echo 'Caught exception: '. $e->getMessage() ."\n";
+			return false;
 		}
 	}
 
@@ -1405,57 +1396,56 @@ body p {margin : 0px;}
 
             }
 
-//            echo $message;exit;
-
+		// echo $message;exit;
+		require 'vendor/autoload.php';
+	
+		$mail_content = new \SendGrid\Mail\Mail();
+		$mail_content->setFrom(EMAIL_SERVER_FROM, SITE_NAME);
+		$mail_content->setSubject($subject);
+		$mail_content->addTo($email);
+		$mail_content->addContent(
+			"text/html", $message
+		);
+		$api_key = SENDGRID_KEY;
+		$sendgrid = new \SendGrid($api_key);
+		try {
+			$response = $sendgrid->send($mail_content);
+			return true;
+		} catch (Exception $e) {
+			// echo 'Caught exception: '. $e->getMessage() ."\n";
+			return false;
+		}
+		/*
            	
-            $config = Array(
-                'protocol' => EMAIL_PROTOCOL,
-                'smtp_host' => EMAIL_SMTP_HOST,
-                'smtp_port' => EMAIL_SMTP_PORT,
-                'smtp_user' => EMAIL_SMTP_USER,
-                'smtp_pass' => EMAIL_SMTP_PASS,
-                'charset'   => EMAIL_CHARSET,
-                'wordwrap'=> EMAIL_WORDWRAP,
-                'mailtype' => EMAIL_MAILTYPE
-            );
+		$config = Array(
+			'protocol' => EMAIL_PROTOCOL,
+			'smtp_host' => EMAIL_SMTP_HOST,
+			'smtp_port' => EMAIL_SMTP_PORT,
+			'smtp_user' => EMAIL_SMTP_USER,
+			'smtp_pass' => EMAIL_SMTP_PASS,
+			'charset'   => EMAIL_CHARSET,
+			'wordwrap'=> EMAIL_WORDWRAP,
+			'mailtype' => EMAIL_MAILTYPE
+		);
 
-            $config['newline']    = "\r\n";
-            $this->CI->load->library('email', $config);
+		$config['newline']    = "\r\n";
+		$this->CI->load->library('email', $config);
 
-            $this->CI->email->to($email); // joseph.rouhana@ucmas.no
-            $this->CI->email->bcc('info@ucmas.no,joseph.rouhana@ucmas.no');
-            $this->CI->email->from(EMAIL_SERVER_FROM, "UCMAS Norge");
-            $this->CI->email->subject($subject);
-            $this->CI->email->message($message);
+		$this->CI->email->to($email); // joseph.rouhana@ucmas.no
+		// $this->CI->email->bcc('info@ucmas.no,joseph.rouhana@ucmas.no');
+		$this->CI->email->from(EMAIL_SERVER_FROM, "UCMAS Norge");
+		$this->CI->email->subject($subject);
+		$this->CI->email->message($message);
 
-            if($this->CI->email->send())
-            {
-                return true;
-            }
-            else
-            {
-                return false; //show_error($this->email->print_debugger());
-			}
-			
-			/*
-			 // Always set content-type when sending HTML email
-			 $headers = "MIME-Version: 1.0" . "\r\n";
-			 $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-			 $headers .= "From: <".EMAIL_SERVER_FROM.">";
-			 $headers .= "Cc: ".EMAIL_SERVER_FROM."\r\n";
-			 $headers .= "Reply-To: info@ucmas.no\r\n";
-			 $headers .= "Bcc: info@ucmas.no\r\n";
-
-            $message = "$message";
-
-            if(mail($to, $subject, $message, $headers)){
-                return true;
-            }else{
-                return false;
-			}
-			*/
-            
-
+		if($this->CI->email->send())
+		{
+			return true;
+		}
+		else
+		{
+			return false; //show_error($this->email->print_debugger());
+		}
+		*/
     }
 
 }

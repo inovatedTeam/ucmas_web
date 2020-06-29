@@ -11,7 +11,7 @@
                     <h3 class="card-header primary-color white-text font-bold" style="line-height: 50px;">
                         View Classrooms
                         <span class="table-add float-right">
-                            <a href="<?=base_url()?>admin/classroom/edit/0" class="btn-floating btn-sm"><i class="fa fa-plus"></i></a>
+                            <a href="<?=base_url()?>admin/classroom/add" class="btn-floating btn-sm"><i class="fa fa-plus"></i></a>
                         </span>
                     </h3>
                     <div class="card-body">
@@ -20,7 +20,7 @@
                             <tr>
                                 <th>Classroom ID</th>
                                 <th>Level Name</th>
-                                <th>Course ID</th>
+                                <th>Description</th>
                                 <th>Teacher</th>
                                 <th>Student Count</th>
                                 <th>Action</th>
@@ -30,7 +30,7 @@
                             <tr>
                                 <th>Classroom ID</th>
                                 <th>Level Name</th>
-                                <th>Course ID</th>
+                                <th>Description</th>
                                 <th>Teacher</th>
                                 <th>Student Count</th>
                                 <th>Action</th>
@@ -43,7 +43,7 @@
                                     echo '<tr>';
                                     echo '<td>'.sprintf("%03d",$c_id).'</td>';
                                     echo '<td>'.$level_name.'</td>';
-                                    echo '<td>'.sprintf("%03d",$course_id).'</td>';
+                                    echo '<td>'.$description.'</td>';
                                     echo '<td>'.$teacher.'</td>';
                                     echo '<td>'.$student_ct.'</td>';
                                     echo '<td>

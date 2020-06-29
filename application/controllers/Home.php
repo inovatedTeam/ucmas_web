@@ -21,4 +21,8 @@ class Home extends Front_end
         $data['pictures'] = $this->apis_model->getHomePictures();
         $this->view('content/home', $data);
     }
+
+    function privacy(){
+        $this->view('content/privacy');
+    }
 }

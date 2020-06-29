@@ -18,6 +18,7 @@
                         <table id="example" class="table table-striped table-bordered table-responsive table-hover" cellspacing="0">
                             <thead>
                             <tr>
+                                <th>Exercise Label</th>
                                 <th>Exercise Type</th>
                                 <th>Description</th>
                                 <th>Action</th>
@@ -25,6 +26,7 @@
                             </thead>
                             <tfoot>
                             <tr>
+                                <th>Exercise Label</th>
                                 <th>Exercise Type</th>
                                 <th>Description</th>
                                 <th>Action</th>
@@ -35,6 +37,7 @@
                                 foreach ($exercise_types as $exercise_type){
                                     extract($exercise_type);
                                     echo '<tr>';
+                                    echo '<td>'.$type_label.'</td>';
                                     echo '<td>'.$type_name.'</td>';
                                     echo '<td>'.$type_description.'</td>';
                                     echo '<td>

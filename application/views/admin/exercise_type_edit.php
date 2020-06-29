@@ -26,8 +26,23 @@
                                 ?>
                             </div>
                             <div class="md-form">
-                                <input id="type_name" name="type_name" type="text" value="<?=$type_name?>" required>
-                                <label for="type_name">Exercise Type Name</label>
+                                <input id="type_label" name="type_label" type="text" value="<?=$type_label?>" required>
+                                <label for="type_label">Exercise Type Label</label>
+                            </div>
+                            <div class="md-form">
+                                <select id="type_name" name="type_name" class="mdb-select" required>
+                                    <option value="-1">Choose Type</option>
+                                    <?php
+                                    foreach ($types as $type){
+                                        if($type== $type_name){
+                                            echo "<option value='".$type."' selected>".$type."</option>";
+                                        }else{
+                                            echo "<option value='".$type."' >".$type."</option>";
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                                <label for="lesson_id">Exercise Type Name</label>
                             </div>
                             <div class="md-form">
                                 <input id="type_description" name="type_description" description="type_description" type="text" value="<?=$type_description?>" >
@@ -51,6 +66,16 @@
 <script>
     var BASE_URL = '<?php echo base_url(); ?>';
     $(document).ready(function() {
+        $('select').addClass('mdb-select');
+        $('.mdb-select').material_select();
+        $('form').submit(function(e) {
+            var type_label = $("#type_label").val()
+            if(type_label == -1) {
+                e.preventDefault();
+                alert("Please select ex_type.");
+                return;
+            }
+        });
     });
 </script>
 

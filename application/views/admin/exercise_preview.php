@@ -137,10 +137,10 @@
                                     <button type="button" class="complete-btn btn btn-pink">Complete</button>
                                 </div>
                             <?php
-                                }else if(strToLower($exercise['exercise_type']) == 'video'){?>
+                                }else if(strToLower($exercise['exercise_type']) == 'video_youtube'){?>
                                 <div id="video_content" class="md-form content-area">
                                     <div class="embed-responsive embed-responsive-16by9">
-                                        <iframe class="embed-responsive-item" src="<?php echo str_replace('watch?v=', 'embed/',$exercise['ex_content']); ?>"></iframe>
+                                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?=$exercise['ex_content']?>"></iframe>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -148,7 +148,7 @@
                                 </div>
                                 
                             <?php
-                                }else if(strToLower($exercise['exercise_type']) == 'game1'){?>
+                                }else if(strToLower($exercise['exercise_type']) == 'reading'){?>
                                 <div id="game1_content" class="md-form content-area">
                                     <div class="row">
                                         <div class="col-md-3"></div>
@@ -249,10 +249,10 @@ function init_content_area(is_init) {
     if(EXERCISE_TYPE.toLowerCase() == 'html') {
         // show html content
         $("#html_content").show();
-    } else if(EXERCISE_TYPE.toLowerCase() == 'video') {
+    } else if(EXERCISE_TYPE.toLowerCase() == 'video_youtube') {
         $("#video_content").show();
         
-    } else if(EXERCISE_TYPE.toLowerCase() == 'game1') {
+    } else if(EXERCISE_TYPE.toLowerCase() == 'reading') {
         $("#game1_content").show();
         $("#game1_presentation").hide();
         if(is_init == "init") {

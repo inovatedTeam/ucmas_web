@@ -36,9 +36,9 @@
                                             <?php
                                             foreach ($exercise_types as $row){
                                                 if(strToLower($row['type_name']) == strToLower($exercise['exercise_type'])){
-                                                    echo "<option value='".$row['type_name']."' selected>".$row['type_name']." :: <small class='text-muted'>".$row['type_description']."</small></option>";
+                                                    echo "<option value='".$row['type_name']."' selected>".$row['type_label']. '('.$row['type_name'].") :: <small class='text-muted'>".$row['type_description']."</small></option>";
                                                 }else{
-                                                    echo "<option value='".$row['type_name']."' >".$row['type_name']." :: <small class='text-muted'>".$row['type_description']."</small></option>";
+                                                    echo "<option value='".$row['type_name']."' >".$row['type_label']. '('.$row['type_name'].") :: <small class='text-muted'>".$row['type_description']."</small></option>";
                                                 }
                                             }
                                             ?>
@@ -89,13 +89,13 @@
                                 <textarea id="ex_content_html" name="ex_content_html"></textarea>
                             </div>
                             <div id="video_content" class="md-form content-area">
-                                <p class="mb-1" for="ex_content_video">Exercise Content (Video)</p>
+                                <p class="mb-1" for="ex_content_video">Exercise Content (Video Youtube)</p>
                                 <small class="text-muted">video (youtube video link) style content</small>
                                 <input id="ex_content_video" name="ex_content_video" type="text" value="" />
                             </div>
                             <div id="game1_content" class="md-form content-area">
                                 <input id="ex_content_game1" name="ex_content_game1" type="hidden" value="" />
-                                <p class="mb-1" for="ex_content_game">Exercise Content (Game1)</p>
+                                <p class="mb-1" for="ex_content_game">Exercise Content (Reading)</p>
                                 <small class="text-muted">This is a game for getting a result using formula. ( e.g. 3 + 4 = ? )</small>
                                 <p class="h3-responsive float-right"><a href="javascript:add_fiels()" class="btn-sm  btn-primary"><i class="fa fa-plus"></i>Manual</a></p>
                                 <div class="file-field">
@@ -350,13 +350,13 @@
                 $("#ex_content_html").Editor();
                 $("#ex_content_html").Editor('setText', EX_CONTENT);
             }
-        } else if(EXERCISE_TYPE.toLowerCase() == 'video') {
+        } else if(EXERCISE_TYPE.toLowerCase() == 'video_youtube') {
             $("#video_content").show();
             if(is_init == "init") {
                 $("#ex_content_video").val(EX_CONTENT);
             }
             
-        } else if(EXERCISE_TYPE.toLowerCase() == 'game1') {
+        } else if(EXERCISE_TYPE.toLowerCase() == 'reading') {
             // console.log(EXERCISE_TYPE)
             $("#game1_content").show();
             if(is_init == "init") {
@@ -391,7 +391,7 @@
             if(EXERCISE_TYPE.toLowerCase() == 'html'){
                 // e.preventDefault();
                 $('#ex_content_html').val($('.Editor-editor').html());
-            }else if(EXERCISE_TYPE.toLowerCase() == 'game1') {
+            }else if(EXERCISE_TYPE.toLowerCase() == 'reading') {
                 var content_game1 = "";
                 if(EX_CONTENT_JSON.length > 0) {
                     content_game1 = JSON.stringify(EX_CONTENT_JSON);
